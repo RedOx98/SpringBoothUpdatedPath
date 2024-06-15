@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -23,6 +25,11 @@ public class WebSecurityConfig {
     };
 
     @Bean
+    public static PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorizeRequests -> 
@@ -30,7 +37,25 @@ public class WebSecurityConfig {
                     .requestMatchers(WHITELIST).permitAll()
                     .anyRequest().authenticated()
             )
-            .csrf(csrf -> csrf.disable())
+            .formLogin(form -> 
+                form
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login")
+                    .usernameParameter("email")
+                    .passwordParameter("password")
+                    .defaultSuccessUrl("/", true)
+                    .failureUrl("/login?error")
+                    .permitAll()
+            )
+            .logout(logout -> 
+                logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/logout?success")
+            )
+            .httpBasic();
+
+        // TODO: remove these after upgrading from H2 infile DB
+        http.csrf(csrf -> csrf.disable())
             .headers(headers -> headers.frameOptions().disable());
 
         return http.build();
