@@ -19,12 +19,14 @@ public class HomeController {
     public String home(Model model){
         List<Post> posts = postService.getAll();
         model.addAttribute("posts", posts);
-        return "home";
+        return "home_views/home";
     }
-    // @GetMapping("/register")
-    // public String register(Model model){
-    //     return "register";
-    // }
+
+    @GetMapping("/editor")
+    public String editor(Model model){
+        return "editor";
+    }
+    
     // @GetMapping("/book")
     // public String book(Model model){
     //     return "book";

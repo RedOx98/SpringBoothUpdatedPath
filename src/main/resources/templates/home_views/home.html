@@ -17,10 +17,14 @@
   <section class="about_section layout_padding">
     <div class="container  ">
       <div class="posts" th:each="post : ${posts}">
-        <h3 th:text="${post.title}">Title</h3>
-        <p th:text="${post.body}">Body</p>
-        <hr/>
+        <h3><a th:href="@{'/post/'+ ${post.id}}" th:text="${post.title}">Title</a></h3>
+        <p th:utext="${post.body}">Body</p>
+        <h5 th:text="'Author: '+ ${post.account.firstname} + 
+        ' | Created at: '+${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')} +
+        ' | Updated at: '+${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm')}"></h5>
+        <hr color="green"/>
       </div>
+      <!-- http://localhost:8080/posts/1 -->
     </div>
   </section>
   <footer th:replace="~{/fragments/footer :: footer}">

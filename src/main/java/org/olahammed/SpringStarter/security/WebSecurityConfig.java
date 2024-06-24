@@ -1,5 +1,7 @@
-package org.olahammed.SpringStarter.config;
+package org.olahammed.SpringStarter.security;
 
+import org.olahammed.SpringStarter.util.constants.Priviledges;
+import org.olahammed.SpringStarter.util.constants.Roles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -22,6 +24,8 @@ public class WebSecurityConfig {
         "/fonts/**",
         "/images/**",
         "/js/**",
+        "src/main/resources/static/**",
+        "/webjars/**",
     };
 
     @Bean
@@ -29,13 +33,23 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    String ADMIN = Roles.ADMIN.getRole();
+    String EDITOR = Roles.EDITOR.getRole();
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorizeRequests -> 
                 authorizeRequests
                     .requestMatchers(WHITELIST).permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/profile/**").authenticated()
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    //hasAnyAuthority(Priviledges.SERVE_AS_ADMIN.getPriviledge(), Priviledges.SERVE_AS_EDITOR.getPriviledge(),Priviledges.SERVE_AS_SUPER_USER.getPriviledge())
+                    .requestMatchers("/editor/**").hasAnyRole("ADMIN","EDITOR")
+                    .requestMatchers("/test").hasAuthority(Priviledges.SERVE_AS_SUPER_USER.getPriviledge())
+                    .requestMatchers("/post/**").hasAnyRole("USER","ADMIN")
+                    .requestMatchers("/posts/**").authenticated()
+                    //.anyRequest().authenticated()
             )
             .formLogin(form -> 
                 form
@@ -50,7 +64,7 @@ public class WebSecurityConfig {
             .logout(logout -> 
                 logout
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/logout?success")
+                    .logoutSuccessUrl("/")
             )
             .httpBasic();
 

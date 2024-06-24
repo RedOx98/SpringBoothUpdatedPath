@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{/fragments/head :: head}">
+
+<body class="admin_page">
+
+  <div class="hero_area">
+    <div class="bg-box">
+      <img src="images/nav-bg.jpg" alt="">
+    </div>
+    <header th:replace="~{/fragments/header :: header}">
+  </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Danger</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a th:href="@{'/posts/'+ ${post.id} + '/delete'}" class="btn btn-danger btn-lg active" role="button"
+            aria-pressed="true">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- about section -->
+
+  <section class="about_section layout_padding">
+    <div class="container">
+      <div class="posts">
+        <h3><a th:text="${post.title}">Title</a></h3>
+        <p th:utext="${post.body}">Body</p>
+        <h5 th:text="'Author: '+ ${post.account.firstname} + 
+        ' | Created at: '+${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')} +
+        ' | Updated at: '+${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm')}"></h5>
+        <hr color="grey" />
+        <div sec:authorize="isAuthenticated()" th:if="${isOwner}">
+          <a th:href="@{'/posts/'+ ${post.id} + '/edit'}" class="btn btn-secondary btn-lg active" role="button"
+            aria-pressed="true">Edit</a> |
+            <a th:href="@{'/posts/'+ ${post.id} + '/delete'}" class="btn btn-danger btn-lg active" role="button"
+            aria-pressed="true">Delete</a>
+            |
+
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Delete
+          </button>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer th:replace="~{/fragments/footer :: footer}">
+</body>
+
+</html>

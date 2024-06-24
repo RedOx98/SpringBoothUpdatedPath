@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.olahammed.SpringStarter.models.Account;
+import org.olahammed.SpringStarter.models.Authority;
 import org.olahammed.SpringStarter.repositories.AccountRepository;
+import org.olahammed.SpringStarter.util.constants.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,6 +30,8 @@ public class AccountService implements UserDetailsService{
     public Account save(Account account) {
         if(account.getId() == null){
             account.setCreatedAt(LocalDateTime.now());
+        } if (account.getRole() == null){
+            account.setRole(Roles.USER.getRole());
         }
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         return accountRepository.save(account);
@@ -36,6 +40,10 @@ public class AccountService implements UserDetailsService{
     public Optional<Account> getById(Long id){
         return accountRepository.findById(id);
     }
+
+    // public String toString(){
+    //     return "email: " + acco;
+    // }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -46,9 +54,16 @@ public class AccountService implements UserDetailsService{
     Account account = optionalAccount.get();
 
     List<GrantedAuthority> grantedAuthority = new ArrayList<>();
-    grantedAuthority.add(new SimpleGrantedAuthority("Allow"));
+    grantedAuthority.add(new SimpleGrantedAuthority(account.getRole()));
+
+    for(Authority _auth: account.getAuthority()){
+        grantedAuthority.add(new SimpleGrantedAuthority(_auth.getName()));
+    }
     return new User(account.getEmail(), account.getPassword(), grantedAuthority);
     }
 
+    public Optional<Account> findOneByEmail(String email){
+       return  accountRepository.findOneByEmailIgnoreCase(email);
+    }
 
 }

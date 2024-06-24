@@ -14,35 +14,31 @@
 
   <!-- about section -->
 
-  <section class="book_section layout_padding">
+  <section class="food_section layout_padding">
     <div class="container">
       <div class="heading_container">
         <h4>
-          Register
+          Add a new post
         </h4>
       </div>
       <div class="row">
         <div class="col-md-6">
           <div class="form_container">
             <form action="#"
-            th:action="@{/register}"
-            th:object="${account}"
+            th:action="@{/posts/add}"
+            th:object="${post}"
             method="post"
             >
-              <div>
-                <input id="email" type="email" th:field="*{email}" class="form-control" placeholder="Email" />
+              <div class="form-group">
+                <input type="hidden" id="account" name="account" th:field="*{account}">
+                <input id="title" th:field="*{title}" name="title" type="text" class="form-control" placeholder="title" />
               </div>
-              <div>
-                <input id="password" type="password" th:field="*{password}" class="form-control" placeholder="Password" />
+              <div class="form-group">
+                <textarea rows="30" id="editor" th:field="*{body}" name="body"/>
               </div>
-              <div>
-                <input id="firstname" type="text" th:field="*{firstname}" class="form-control" placeholder="Your Firstname" />
-             
-              <div class="btn_box">
-                <button type="submit">
-                  Register
+                <button type="submit" class="btn btn-primary">
+                  Add Post
                 </button>
-              </div>
             </form>
           </div>
         </div>
