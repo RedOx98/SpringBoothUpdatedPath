@@ -24,12 +24,12 @@ public class WebSecurityConfig {
         "/fonts/**",
         "/images/**",
         "/js/**",
-        "src/main/resources/static/**",
+        "/src/main/resources/static/**",
         "/webjars/**",
     };
 
     @Bean
-    public static PasswordEncoder passwordEncoder(){
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -39,21 +39,25 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+        .headers(
+            headers -> 
+            headers.frameOptions().sameOrigin()
+        )
             .authorizeHttpRequests(authorizeRequests -> 
                 authorizeRequests
                     .requestMatchers(WHITELIST).permitAll()
                     .requestMatchers("/profile/**").authenticated()
                     .requestMatchers("/admin/**").hasRole("ADMIN")
-                    //hasAnyAuthority(Priviledges.SERVE_AS_ADMIN.getPriviledge(), Priviledges.SERVE_AS_EDITOR.getPriviledge(),Priviledges.SERVE_AS_SUPER_USER.getPriviledge())
-                    .requestMatchers("/editor/**").hasAnyRole("ADMIN","EDITOR")
+                    .requestMatchers("/editor/**").hasAnyRole("ADMIN", "EDITOR")
                     .requestMatchers("/test").hasAuthority(Priviledges.SERVE_AS_SUPER_USER.getPriviledge())
-                    .requestMatchers("/post/**").hasAnyRole("USER","ADMIN")
+                    .requestMatchers("/post/**").hasAnyRole("USER", "ADMIN")
                     .requestMatchers("/posts/**").authenticated()
-                    //.anyRequest().authenticated()
+                    .requestMatchers("/updatephoto").permitAll()
+                    .anyRequest().authenticated() // Ensure this is uncommented to catch any other requests
             )
             .formLogin(form -> 
                 form
-                    .loginPage("/login")
+                    .loginPage("/login") // Ensure this matches your Thymeleaf template
                     .loginProcessingUrl("/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
@@ -69,7 +73,13 @@ public class WebSecurityConfig {
             .httpBasic();
 
         // TODO: remove these after upgrading from H2 infile DB
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> 
+        csrf
+        .ignoringRequestMatchers("/resources/static/**")
+        
+        // csrf.disable()
+        
+        )
             .headers(headers -> headers.frameOptions().disable());
 
         return http.build();

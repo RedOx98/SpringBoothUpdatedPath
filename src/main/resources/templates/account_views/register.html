@@ -30,15 +30,37 @@
             method="post"
             >
               <div>
-                <input id="email" type="email" th:field="*{email}" class="form-control" placeholder="Email" />
+                <input id="email" name="email" type="text" th:field="*{email}" class="form-control" placeholder="Email" required/>
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert alert-danger" role="alert">Email error</p>
               </div>
               <div>
-                <input id="password" type="password" th:field="*{password}" class="form-control" placeholder="Password" />
+                <input id="password" type="password" th:field="*{password}" class="form-control" placeholder="Password" required/>
+                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert alert-danger" role="alert">Password error</p>
               </div>
               <div>
-                <input id="firstname" type="text" th:field="*{firstname}" class="form-control" placeholder="Your Firstname" />
+                <input id="firstname" type="text" th:field="*{firstname}" class="form-control" placeholder="Your Firstname" required/>
+                <p th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}" class="alert alert-danger" role="alert">Firstname error</p>
                 </div>
-             
+                <div>
+                  <input id="lastname" type="text" th:field="*{lastname}" class="form-control" placeholder="Your Lastname" required/>
+                  <p th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}" class="alert alert-danger" role="alert">Firstname error</p>
+                  </div>
+                  <div>
+                    <input id="age" type="number" th:field="*{age}" class="form-control" placeholder="Your Age" min="18" max="99"/>
+                    <p th:if="${#fields.hasErrors('age')}" th:errors="*{age}" class="alert alert-danger" role="alert">Age error</p>
+                    </div>
+                    <div>
+                      <div class="">
+                        <select name="gender" id="gender" th:field="*{gender}" class="form-control">
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Others">Others</option>
+                          <p th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="alert alert-danger" role="alert">Gender error</p>
+                        </select>
+                      </div>
+                      <input id="date_of_birth" type="date" required th:field="*{date_of_birth}" class="form-control" placeholder="Date of Birth"/>
+                      <p th:if="${#fields.hasErrors('date_of_birth')}" th:errors="*{date_of_birth}" class="alert alert-danger" role="alert">date_of_birth error</p>
+                      </div>
               <div class="btn_box">
                 <button type="submit">
                   Register

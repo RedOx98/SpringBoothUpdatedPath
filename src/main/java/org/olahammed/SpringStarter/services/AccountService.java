@@ -10,6 +10,7 @@ import org.olahammed.SpringStarter.models.Authority;
 import org.olahammed.SpringStarter.repositories.AccountRepository;
 import org.olahammed.SpringStarter.util.constants.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AccountService implements UserDetailsService{
+    @Value("${spring.mvc.static-path-pattern}")
+    private String photo_prefix;
     @Autowired
     private AccountRepository accountRepository;
 
@@ -32,6 +35,11 @@ public class AccountService implements UserDetailsService{
             account.setCreatedAt(LocalDateTime.now());
         } if (account.getRole() == null){
             account.setRole(Roles.USER.getRole());
+        }
+        if (account.getPhoto() == null){
+            String path = photo_prefix.replace("**", "images/person.png");
+            // String path2 = "/resources/static/images/person.png";
+            account.setPhoto(path);
         }
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         return accountRepository.save(account);
@@ -65,5 +73,9 @@ public class AccountService implements UserDetailsService{
     public Optional<Account> findOneByEmail(String email){
        return  accountRepository.findOneByEmailIgnoreCase(email);
     }
+
+    public Optional<Account> findById(Long id){
+        return  accountRepository.findById(id);
+     }
 
 }

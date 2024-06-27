@@ -1,6 +1,7 @@
 package org.olahammed.SpringStarter.config;
 
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,9 @@ public class SeedData implements CommandLineRunner{
         account01.setPassword("password");
         account01.setFirstname("user");
         account01.setLastname("lastname");
+        account01.setAge(20);
+        account01.setDate_of_birth(LocalDate.parse("1990-01-01"));
+        account01.setGender("Male");
 
         account02.setEmail("admin@admin.com");
         account02.setPassword("password");
@@ -60,6 +64,9 @@ public class SeedData implements CommandLineRunner{
         account02.setAuthority(authoritiesAdmin);
         account02.setAuthority(authoritiesAdmin);
         account02.setRole(Roles.ADMIN.getRole());
+        account02.setAge(20);
+        account02.setDate_of_birth(LocalDate.parse("1990-01-01"));
+        account02.setGender("Female");
 
         account03.setEmail("editor@editor.com");
         account03.setPassword("password");
@@ -69,6 +76,9 @@ public class SeedData implements CommandLineRunner{
         authorityService.getById(Priviledges.SERVE_AS_EDITOR.getId()).ifPresent(authoritiesEditor::add);
         account03.setAuthority(authoritiesEditor);
         account03.setRole(Roles.EDITOR.getRole());
+        account03.setAge(20);
+        account03.setDate_of_birth(LocalDate.parse("1998-01-01"));
+        account03.setGender("Male");
         // System.out.println(account03);
 
         account04.setEmail("supereditor@supereditor.com");
@@ -80,6 +90,9 @@ public class SeedData implements CommandLineRunner{
         authorityService.getById(Priviledges.ACCESS_ADMIN_PANEL.getId()).ifPresent(authorities::add);
         authorityService.getById(Priviledges.SERVE_AS_SUPER_USER.getId()).ifPresent(authorities::add);
         account04.setAuthority(authorities);
+        account04.setAge(40);
+        account04.setDate_of_birth(LocalDate.parse("1975-01-01"));
+        account04.setGender("Male");
 
         accountService.save(account01);
         accountService.save(account02);
