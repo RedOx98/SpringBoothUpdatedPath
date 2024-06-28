@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findOneByEmailIgnoreCase(String username);
+
+    Optional<Account> findByToken(String token);
     
 }

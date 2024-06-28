@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -64,7 +65,8 @@ public class Account {
     @OneToMany(mappedBy = ("account"))
     private List<Post> posts;
 
-    private String passswordResetToken;
+    @Column(name = "token")
+    private String token;
 
     private LocalDateTime passswordResetTokenExpiry;
 

@@ -32,6 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 public class AccountController {
@@ -48,6 +50,9 @@ public class AccountController {
 
     @Value("${password.token.reset..timeout.minutes}")
     private int passwordTokenTimeout;
+
+    @Value("${site.domain}")
+    private String siteDomain;
 
     @GetMapping("/register")
     public String register(Model model) {
@@ -128,64 +133,6 @@ public class AccountController {
 
     }
 
-    // @PostMapping("updatephoto")
-    // @PreAuthorize("isAuthenticated()")
-    // public String update_photo(@RequestParam("file") MultipartFile file,
-    // RedirectAttributes attributes, Principal principal){
-    // if(file.isEmpty()){
-    // attributes.addFlashAttribute("error", "No file uploaded");
-    // return "redirect:/profile";
-    // }else{
-    // String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-
-    // try {
-    // int lenght = 10;
-    // boolean useLetters = true;
-    // boolean useNumbers = true;
-    // String generatedString =
-    // RandomStringUtils.random(lenght,useLetters,useNumbers);
-    // String final_photo_name = generatedString + fileName;
-    // String absolute_fileLocation = AppUtil.get_upload_path(final_photo_name);
-
-    // Path path = Paths.get(absolute_fileLocation);
-    // Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-    // attributes.addFlashAttribute("message", "You successfully uploaded");
-
-    // String authUser = "email";
-    // if (principal != null) {
-    // authUser = principal.getName();
-    // }
-
-    // Optional<Account> optional_Account = accountService.findOneByEmail(authUser);
-    // if (optional_Account.isPresent()){
-    // Account account = optional_Account.get();
-    // Account account_by_id = accountService.findById(account.getId()).get();
-    // String relative_fileLocation = photo_prefix.replace("**","uploads/"+
-    // final_photo_name);
-    // account_by_id.setPhoto(relative_fileLocation);
-    // accountService.save(account_by_id);
-    // }
-    // try {
-    // TimeUnit.SECONDS.sleep(1);
-    // } catch (InterruptedException ie) {
-    // Thread.currentThread().interrupt();
-    // }
-    // return "redirect:/profile";
-
-    // } catch (Exception e) {
-    // // TODO: handle exception
-    // }
-    // }
-    // return "redirect:/profile?error";
-    // }
-
-    // @GetMapping("/updatephoto")
-    // @PreAuthorize("isAuthenticated()")
-    // public String updatePhoto(Model model){
-    // // return "account_views/login";
-    // return "redirect:/profile";
-    // }
-
     @PostMapping("/updatephoto")
     @PreAuthorize("isAuthenticated()")
     public String getUpdatePhoto(@RequestParam(name = "file", required = false) MultipartFile file,
@@ -222,13 +169,11 @@ public class AccountController {
                     try {
                         TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException ie) {
-                        // TODO: handle exception
                         Thread.currentThread().interrupt();
                     }
                     return "redirect:/profile";
                 }
             } catch (Exception e) {
-                // TODO: handle exception
             }
         }
         return "redirect:/profile?error";
@@ -246,10 +191,10 @@ public class AccountController {
         if (optionalAccount.isPresent()) {
             Account account = accountService.findById(optionalAccount.get().getId()).get();
             String resetToken = UUID.randomUUID().toString();
-            account.setPassswordResetToken(resetToken);
+            account.setToken(resetToken);
             account.setPassswordResetTokenExpiry(LocalDateTime.now().plusMinutes(passwordTokenTimeout));
             accountService.save(account);
-            String resetMessage = "This is the reset password link: http://localhost:8080/resert-password?token="
+            String resetMessage = "This is the reset password link: " + siteDomain + "change-password?token="
                     + resetToken;
             EmailDetails details = new EmailDetails(account.getEmail(), resetMessage, "Reset password Olahammed");
             if (emailService.sendSimpleEmail(details) == false) {
@@ -265,5 +210,39 @@ public class AccountController {
             return "redirect:/forgot-password";
         }
     }
+
+    @GetMapping("/change-password")
+    public String changePassword(Model model, @RequestParam("token") String token, RedirectAttributes attributes,
+            Principal principal) {
+                if (token == null) {
+                    attributes.addFlashAttribute("error", "Invalid token");
+                    return "redirect:/forgot-password";
+                }
+        Optional<Account> optionalAccount = accountService.findByToken(token);
+        if (optionalAccount.isPresent()) {
+            Account account = accountService.findById(optionalAccount.get().getId()).get();
+            LocalDateTime now = LocalDateTime.now();
+            if (now.isAfter(optionalAccount.get().getPassswordResetTokenExpiry())) {
+                attributes.addFlashAttribute("error", "Token Expired!");
+                return "redirect:/forgot-password";
+            }
+            ;
+            model.addAttribute("account", account);
+            return "account_views/change_password";
+        }
+        attributes.addFlashAttribute("error", "Token Error!");
+        return "redirect:/forgot-password";
+    }
+
+    @PostMapping("/change-password")
+    public String postChangePassword(@ModelAttribute Account account,RedirectAttributes attributes) {
+        Account accountById = accountService.getById(account.getId()).get();
+        accountById.setPassword(account.getPassword());
+        accountById.setToken("");
+        accountService.save(accountById);
+        attributes.addFlashAttribute("message", "Password updated succesfully!");
+        return "redirect:/login";
+    }
+    
 
 }
