@@ -64,6 +64,10 @@ public class Account {
     @OneToMany(mappedBy = ("account"))
     private List<Post> posts;
 
+    private String passswordResetToken;
+
+    private LocalDateTime passswordResetTokenExpiry;
+
     @ManyToMany
     @JoinTable(
         name = "account_authority",

@@ -26,6 +26,7 @@ public class WebSecurityConfig {
         "/js/**",
         "/src/main/resources/static/**",
         "/webjars/**",
+        // "/reset_password"
     };
 
     @Bean
@@ -70,6 +71,9 @@ public class WebSecurityConfig {
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/")
             )
+            .rememberMe(t ->
+            t.rememberMeParameter("remember-me")
+             )
             .httpBasic();
 
         // TODO: remove these after upgrading from H2 infile DB
