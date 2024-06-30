@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +36,8 @@ public class Post {
 
     private LocalDateTime updatedAt;
 
+    // Removed , nullable = true from the ManyToOne() below
     @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "account_id", referencedColumnName = "id" , nullable = true)
     private Account account;
 }

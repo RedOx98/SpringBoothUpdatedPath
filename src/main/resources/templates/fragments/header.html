@@ -20,7 +20,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav  mx-auto ">
             <li class="nav-item ">
-              <a class="nav-link" th:href="@{/}">Home</a>
+              <a class="nav-link" th:href="@{/}">Home </a>
             </li>
             <span sec:authorize="!isAuthenticated()">
             <li class="nav-item">
@@ -32,9 +32,9 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
               <a class="nav-link" th:href="@{/login}">login</a>
             </li>
           </span>
-          <span sec:authorize="!isAuthenticated()">
+          <span sec:authorize="isAuthenticated()">
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/profile}">Profile</a>
+              <a class="nav-link"th:href="@{/profile}">Profile</a>
             </li>
           </span>
           <span sec:authorize="isAuthenticated()">
@@ -42,26 +42,22 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
               <a class="nav-link" th:href="@{/posts/add}">Add Post</a>
             </li>
           </span>
-          <span sec:authorize="hasAuthority('ACCESS_ADMIN_PANEL')">
+     
+          <span sec:authorize="hasRole('ROLE_ADMIN')">
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/admin}">admin</a>
-            </li>
-          </span>
-          <!-- <span sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_EDITOR')">
-            <li class="nav-item">
-              <a class="nav-link" href="/editor">editor</a>
-            </li>
-          </span> -->
-          <span sec:authorize="isAuthenticated()">
-            <li class="nav-item">
-              <a class="nav-link" th:href="@{/logout}">logout</a>
+              <a class="nav-link"th:href="@{/admin}">admin</a>
             </li>
           </span>
           <!-- <span sec:authorize="hasAuthority('ACCESS_ADMIN_PANEL')">
             <li class="nav-item">
               <a class="nav-link" href="/admin">admin</a>
-            </li> -->
-        
+            </li>
+          </span> -->
+
+          <span sec:authorize="isAuthenticated()">
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/logout}">logout</a>
+            </li>
           </span>
           </ul> 
         </div>

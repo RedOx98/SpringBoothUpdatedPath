@@ -11,22 +11,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+// (prePostEnabled = true, securedEnabled = true) (from enableMethod decorator)
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity
 public class WebSecurityConfig {
     private static final String[] WHITELIST = {
         "/",
         "/login",
         "/register",
         "/db-console/**",
-        "/css/**",
-        "/fonts/**",
-        "/images/**",
-        "/js/**",
-        "/src/main/resources/static/**",
-        "/webjars/**",
-        // "/reset_password"
+        "/resources/**",
+        "/posts/**"
     };
 
     @Bean
@@ -52,8 +48,8 @@ public class WebSecurityConfig {
                     .requestMatchers("/editor/**").hasAnyRole("ADMIN", "EDITOR")
                     .requestMatchers("/test").hasAuthority(Priviledges.SERVE_AS_SUPER_USER.getPriviledge())
                     .requestMatchers("/post/**").hasAnyRole("USER", "ADMIN")
-                    .requestMatchers("/posts/**").authenticated()
-                    .requestMatchers("/updatephoto").permitAll()
+                    .requestMatchers("/logout/**").authenticated()
+                    .requestMatchers("/updatephoto").hasAnyRole("USER", "ADMIN")
                     .anyRequest().authenticated() // Ensure this is uncommented to catch any other requests
             )
             .formLogin(form -> 

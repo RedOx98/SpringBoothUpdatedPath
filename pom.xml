@@ -11,7 +11,7 @@
 			spring-boot-starter-parent
 		</artifactId>
 		<version>
-			3.2.6
+			3.0.0
 		</version>
 		<relativePath />
 		<!-- lookup parent from repository -->
@@ -121,12 +121,8 @@
 				org.thymeleaf.extras
 			</groupId>
 			<artifactId>
-				thymeleaf-extras-springsecurity5
+				thymeleaf-extras-springsecurity6
 			</artifactId>
-			<version>
-				3.0.3.RELEASE
-			</version>
-			<!-- Added version -->
 		</dependency>
 		<dependency>
 			<groupId>
